@@ -35,6 +35,8 @@ while true; do
         # Saving the user's API key to the .env file
         echo "APIKEY=$PASTED_APIKEY" > .env
         echo "API=$PASTED_APIKEY"  # Assuming you want to set API variable to the same value
+        echo "PAIR1=$PAIR1" >> .env
+        echo "PAIR2=$PAIR2" >> .env
         echo "Congratulations! You have successfully added your API KEY to .env."
       elif [ "$HAS_APIKEY" == "2" ]; then
         # Creating a message to be signed with a timestamp as a nonce
@@ -52,6 +54,8 @@ while true; do
         # Saving the new API key value to the .env file
         echo "APIKEY=$NEW_API_KEY" > .env
         echo "API=$NEW_API_KEY"  # Assuming you want to set API variable to the same value
+        echo "PAIR1=$PAIR1" >> .env
+        echo "PAIR2=$PAIR2" >> .env
         echo "Congratulations! You have successfully obtained an API KEY and it's saved in .env."
       else
         echo "Invalid choice. Exiting the script."
