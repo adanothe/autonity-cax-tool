@@ -14,39 +14,49 @@ while true; do
   echo "1. Generate API Key"
   echo "2. View Balance"
   echo "3. View Order Books"
-  echo "4. orderbook information"
+  echo "4. Orderbook Information"
   echo "5. Place Order"
   echo "6. Check Open Order"
   echo "7. Cancel Order"
   echo "8. Withdraw"
-  echo "9. Check Deposits & Withdraw history"
+  echo "9. Check Deposits & Withdraw History"
   echo "10. Exit"
   read -p "Enter your choice (1/2/3/4/5/6/7/8/9/10): " CHOICE
 
   case "$CHOICE" in
     "1")
-      # Checking if API KEY is already present in the .env file
-      if [ -n "$APIKEY" ]; then
-        echo "API KEY is already registered in .env. Congratulations, you are ready for other actions!"
-        continue
+      # Asking the user if they already have an API key
+      read -p "Do you already have an API key? (1 for Yes, 2 for No): " HAS_APIKEY
+
+      if [ "$HAS_APIKEY" == "1" ]; then
+        # Asking the user to paste their API key
+        read -p "Paste your API key: " PASTED_APIKEY
+
+        # Saving the user's API key to the .env file
+        echo "APIKEY=$PASTED_APIKEY" > .env
+        echo "API=$PASTED_APIKEY"  # Assuming you want to set API variable to the same value
+        echo "Congratulations! You have successfully added your API KEY to .env."
+      elif [ "$HAS_APIKEY" == "2" ]; then
+        # Creating a message to be signed with a timestamp as a nonce
+        MESSAGE=$(jq -nc --arg nonce "$(date +%s%N)" '$ARGS.named')
+
+        # Signing the message and saving it to a file
+        aut account sign-message "$MESSAGE" message.sig
+
+        # Making a POST request to obtain a new API key
+        API_KEY_RESPONSE=$(echo -n "$MESSAGE" | https POST "https://cax.piccadilly.autonity.org/api/apikeys" "api-sig:@message.sig")
+
+        # Obtaining the API key value from the response
+        NEW_API_KEY=$(echo "$API_KEY_RESPONSE" | jq -r .apikey)
+
+        # Saving the new API key value to the .env file
+        echo "APIKEY=$NEW_API_KEY" > .env
+        echo "API=$NEW_API_KEY"  # Assuming you want to set API variable to the same value
+        echo "Congratulations! You have successfully obtained an API KEY and it's saved in .env."
+      else
+        echo "Invalid choice. Exiting the script."
+        exit 1
       fi
-
-      # Creating a message to be signed with a timestamp as a nonce
-      MESSAGE=$(jq -nc --arg nonce "$(date +%s%N)" '$ARGS.named')
-
-      # Signing the message and saving it to a file
-      aut account sign-message "$MESSAGE" message.sig
-
-      # Making a POST request to obtain a new API key
-      API_KEY_RESPONSE=$(echo -n "$MESSAGE" | https POST "https://cax.piccadilly.autonity.org/api/apikeys" "api-sig:@message.sig")
-
-      # Obtaining the API key value from the response
-      NEW_API_KEY=$(echo "$API_KEY_RESPONSE" | jq -r .apikey)
-
-      # Saving the new API key value to the .env file
-      echo "APIKEY=$NEW_API_KEY" > .env
-      echo "NEW_APIKEY=$NEW_API_KEY"
-      echo "Congratulations! You have successfully obtained an API KEY and it's saved in .env."
       ;;
     "2")
       # Making an HTTP GET request to check the balance
