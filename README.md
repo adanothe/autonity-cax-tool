@@ -30,8 +30,7 @@ Ensure the following dependencies are installed:
 1. Clone the CAX tool repository:
    ```bash
    git clone https://github.com/Dedenwrg/autonity-cax-tool.git
-
-cd autonity-cax-tool
+   cd autonity-cax-tool
    ```
 
 2. Copy the default environment file:
