@@ -134,10 +134,10 @@ while true; do
       ;;  
     "7")
       # Asking the user whether to cancel a specific order or all orders
-      read -p "Do you want to cancel a specific order or all orders? (specific/all): " CANCEL_OPTION
+      read -p "Do you want to cancel a specific order or all orders? (1 for specific, 2 for all): " CANCEL_OPTION
 
       case "$CANCEL_OPTION" in
-        "specific")
+        "1")
           # Get the ID of the first open order
           SPECIFIC_ORDER_ID=$(http GET https://cax.piccadilly.autonity.org/api/orders API-Key:$API | jq -r 'first(.[] | select(.status == "open") | .order_id)')
 
@@ -155,7 +155,7 @@ while true; do
             echo "No open orders to cancel."
           fi
           ;;
-        "all")
+        "2")
           # Getting all open order IDs
           order_ids=$(http GET https://cax.piccadilly.autonity.org/api/orders API-Key:$API | jq -r '.[] | select(.status == "open") | .order_id')
 
