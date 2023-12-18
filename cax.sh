@@ -1,5 +1,7 @@
 #!/bin/bash
 
+GET_API_KEY="./get_aut_api_key"
+
 while true; do
   # Reading values from the .env file
   if [ -f .env ]; then
@@ -64,7 +66,7 @@ while true; do
       ;;
     "2")
       # Making an HTTP GET request to check the balance
-      http GET "https://cax.piccadilly.autonity.org/api/balances/" "API-Key:$APIKEY"
+      http GET "https://cax.piccadilly.autonity.org/api/balances/" "API-Key:$($GET_API_KEY)"
       ;;
     "3")
       # Asking the user to choose a pair (ATN-USD or NTN-USD) for option 3
@@ -83,11 +85,11 @@ while true; do
       esac
 
       # Making an HTTP GET request to orderbooks with the chosen pair
-      http GET "https://cax.piccadilly.autonity.org/api/orderbooks/$PAIR/quote" "API-Key:$APIKEY"
+      http GET "https://cax.piccadilly.autonity.org/api/orderbooks/$PAIR/quote" "API-Key:$($GET_API_KEY)"
       ;;
     "4")
       # Making an HTTP GET request to orderbooks without a specific pair
-      http GET "https://cax.piccadilly.autonity.org/api/orderbooks/" "API-Key:$APIKEY"
+      http GET "https://cax.piccadilly.autonity.org/api/orderbooks/" "API-Key:$($GET_API_KEY)"
       ;;
     "5")
       # Asking the user to choose a pair (ATN-USD or NTN-USD) for option 5
@@ -119,11 +121,11 @@ while true; do
       read -p "Enter amount: " AMOUNT
 
       # Making an HTTP POST request to place orders with the chosen parameters
-      http POST "https://cax.piccadilly.autonity.org/api/orders/" "API-Key:$APIKEY" "pair=$PAIR" "side=$SIDE" "price=$PRICE" "amount=$AMOUNT"
+      http POST "https://cax.piccadilly.autonity.org/api/orders/" "API-Key:$($GET_API_KEY)" "pair=$PAIR" "side=$SIDE" "price=$PRICE" "amount=$AMOUNT"
       ;;
     "6")
       # Making an HTTP GET request to view open orders with order ID 0 and status "open"
-      API_RESPONSE=$(http GET "https://cax.piccadilly.autonity.org/api/orders" "API-Key:$API" | jq 'map(select(.status == "open"))')
+      API_RESPONSE=$(http GET "https://cax.piccadilly.autonity.org/api/orders" "API-Key:$($GET_API_KEY)" | jq 'map(select(.status == "open"))')
 
       if [ -n "$API_RESPONSE" ]; then
         echo "Open orders with status 'open':"
@@ -139,12 +141,12 @@ while true; do
       case "$CANCEL_OPTION" in
         "1")
           # Get the ID of the first open order
-          SPECIFIC_ORDER_ID=$(http GET https://cax.piccadilly.autonity.org/api/orders API-Key:$API | jq -r 'first(.[] | select(.status == "open") | .order_id)')
+          SPECIFIC_ORDER_ID=$(http GET https://cax.piccadilly.autonity.org/api/orders "API-Key:$($GET_API_KEY)" | jq -r 'first(.[] | select(.status == "open") | .order_id)')
 
           # Check if there is an open order
           if [ -n "$SPECIFIC_ORDER_ID" ]; then
             # Making an HTTP DELETE request to cancel the specific order
-            http DELETE "https://cax.piccadilly.autonity.org/api/orders/$SPECIFIC_ORDER_ID" API-Key:$API
+            http DELETE "https://cax.piccadilly.autonity.org/api/orders/$SPECIFIC_ORDER_ID" "API-Key:$($GET_API_KEY)"
 
             if [ $? -eq 0 ]; then
               echo "Order $SPECIFIC_ORDER_ID has been canceled successfully."
@@ -157,12 +159,12 @@ while true; do
           ;;
         "2")
           # Getting all open order IDs
-          order_ids=$(http GET https://cax.piccadilly.autonity.org/api/orders API-Key:$API | jq -r '.[] | select(.status == "open") | .order_id')
+          order_ids=$(http GET https://cax.piccadilly.autonity.org/api/orders "API-Key:$($GET_API_KEY)" | jq -r '.[] | select(.status == "open") | .order_id')
 
           if [ -n "$order_ids" ]; then
             # Canceling each open order
             for order_id in $order_ids; do
-              http DELETE "https://cax.piccadilly.autonity.org/api/orders/$order_id" API-Key:$API
+              http DELETE "https://cax.piccadilly.autonity.org/api/orders/$order_id" "API-Key:$($GET_API_KEY)"
               echo "Order $order_id has been canceled successfully."
             done
 
@@ -188,11 +190,11 @@ while true; do
       read -p "Enter withdrawal amount: " AMOUNT
 
       # Making an HTTP POST request to withdraw with the chosen symbol and amount
-      http POST "https://cax.piccadilly.autonity.org/api/withdraws/" "API-Key:$APIKEY" "symbol=$SYMBOL" "amount=$AMOUNT"
+      http POST "https://cax.piccadilly.autonity.org/api/withdraws/" "API-Key:$($GET_API_KEY)" "symbol=$SYMBOL" "amount=$AMOUNT"
       ;;
     "9")
       # Making an HTTP GET request to view deposit history
-      DEPOSIT_HISTORY=$(http GET "https://cax.piccadilly.autonity.org/api/deposits" "API-Key:$API")
+      DEPOSIT_HISTORY=$(http GET "https://cax.piccadilly.autonity.org/api/deposits" "API-Key:$($GET_API_KEY)")
 
       if [ -n "$DEPOSIT_HISTORY" ]; then
         echo "Deposit History:"
@@ -202,7 +204,7 @@ while true; do
       fi
 
       # Making an HTTP GET request to view withdraw history
-      WITHDRAW_HISTORY=$(http GET "https://cax.piccadilly.autonity.org/api/withdraws" "API-Key:$API")
+      WITHDRAW_HISTORY=$(http GET "https://cax.piccadilly.autonity.org/api/withdraws" "API-Key:$($GET_API_KEY)")
 
       if [ -n "$WITHDRAW_HISTORY" ]; then
         echo "Withdraw History:"
