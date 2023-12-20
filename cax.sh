@@ -177,12 +177,24 @@ while true; do
       esac
       ;;
     "8")
-      # Asking the user to choose a symbol (ATN or NTN)
-      read -p "Choose symbol (ATN or NTN): " SYMBOL
-      if [ "$SYMBOL" != "ATN" ] && [ "$SYMBOL" != "NTN" ]; then
-        echo "Invalid symbol."
-        continue
-      fi
+      # Displaying symbol options
+      echo "Symbol options:"
+      echo "1. ATN"
+      echo "2. NTN"
+      read -p "Choose symbol (1 for ATN, 2 for NTN): " SYMBOL_CHOICE
+
+      case "$SYMBOL_CHOICE" in
+        "1")
+          SYMBOL="ATN"
+          ;;
+        "2")
+          SYMBOL="NTN"
+          ;;
+        *)
+          echo "Invalid choice. Exiting the script."
+          exit 1
+          ;;
+      esac
 
       # Asking the user to enter the withdrawal amount
       read -p "Enter withdrawal amount: " AMOUNT
@@ -217,22 +229,6 @@ while true; do
       ;;
     *)
       echo "Invalid choice."
-      continue
-      ;;
-  esac
-
-  # Asking the user if they want to go back to the menu or exit
-  read -p "Do you want to go back to the menu or exit? (back/exit): " CONTINUE
-  case "$CONTINUE" in
-    "back")
-      continue
-      ;;
-    "exit")
-      echo "Exiting the script."
-      exit 0
-      ;;
-    *)
-      echo "Invalid choice. Exiting the script."
       exit 1
       ;;
   esac
