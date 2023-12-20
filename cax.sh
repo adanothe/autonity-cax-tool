@@ -224,8 +224,23 @@ while true; do
       fi
       ;;
     "10")
-      echo "Exiting the script."
-      exit 0
+      # Asking the user if they want to go back to the menu or exit
+      read -p "Do you want to go back to the menu or exit? (1 for back, 2 for exit): " CONTINUE
+
+      case "$CONTINUE" in
+        "1")
+          # Continue the loop to go back to the menu
+          continue
+          ;;
+        "2")
+          echo "Exiting the script."
+          exit 0
+          ;;
+        *)
+          echo "Invalid choice. Exiting the script."
+          exit 1
+          ;;
+      esac
       ;;
     *)
       echo "Invalid choice."
