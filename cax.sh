@@ -19,7 +19,7 @@ while true; do
   echo "6. Check Open Order"
   echo "7. Cancel Order"
   echo "8. Withdraw"
-  echo "9. Deposit History"
+  echo "9. Deposit & Withdraw History"
   echo "10. Exit"
   read -p "Enter your choice (1/2/3/4/5/6/7/8/9/10): " CHOICE
 
@@ -34,7 +34,6 @@ while true; do
 
         # Saving the user's API key to the .env file
         echo "APIKEY=$PASTED_APIKEY" > .env
-        echo "API=$PASTED_APIKEY" >> .env
         echo "PAIR1=$PAIR1" >> .env
         echo "PAIR2=$PAIR2" >> .env
         echo "Congratulations! You have successfully added your API KEY to .env."
@@ -211,6 +210,16 @@ while true; do
         echo "$DEPOSIT_HISTORY"
       else
         echo "No deposit history found."
+      fi
+
+      # Making an HTTP GET request to view withdraw history
+      WITHDRAW_HISTORY=$(http GET "https://cax.piccadilly.autonity.org/api/withdraws" "API-Key:$APIKEY")
+
+      if [ -n "$WITHDRAW_HISTORY" ]; then
+        echo "Withdraw History:"
+        echo "$WITHDRAW_HISTORY"
+      else
+        echo "No withdraw history found."
       fi
       ;;
     "10")
