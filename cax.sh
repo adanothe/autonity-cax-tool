@@ -204,15 +204,40 @@ while true; do
       http POST "https://cax.piccadilly.autonity.org/api/withdraws/" "API-Key:$APIKEY" "symbol=$SYMBOL" "amount=$AMOUNT"
       ;;
     "9")
-      # Making an HTTP GET request to view deposit history
-      DEPOSIT_HISTORY=$(http GET "https://cax.piccadilly.autonity.org/api/deposits" "API-Key:$API")
+      # Asking the user to choose a symbol (ATN or NTN) for the deposit
+      echo "Symbol options:"
+      echo "1. ATN"
+      echo "2. NTN"
+      read -p "Choose symbol (1 for ATN, 2 for NTN): " SYMBOL_CHOICE
 
-      if [ -n "$DEPOSIT_HISTORY" ]; then
-        echo "Deposit History:"
-        echo "$DEPOSIT_HISTORY"
+      case "$SYMBOL_CHOICE" in
+        "1")
+          SYMBOL="ATN"
+          ;;
+        "2")
+          SYMBOL="NTN"
+          ;;
+        *)
+          echo "Invalid choice. Exiting the script."
+          exit 1
+          ;;
+      esac
+
+      # Asking the user to enter the deposit amount
+      read -p "Enter deposit amount: " AMOUNT
+
+      # Getting the recipient address from the DEPOSIT environment variable
+      RECIPIENT_ADDRESS="$DEPOSIT"
+
+      # Constructing the aut command based on the chosen symbol
+      if [ "$SYMBOL" == "ATN" ]; then
+        AUT_COMMAND="aut tx make --to $RECIPIENT_ADDRESS --value $AMOUNT | aut tx sign - | aut tx send -"
       else
-        echo "No deposit history found."
+        AUT_COMMAND="aut tx make --to $RECIPIENT_ADDRESS --value $AMOUNT --ntn | aut tx sign - | aut tx send -"
       fi
+
+      # Executing the constructed aut command
+      eval "$AUT_COMMAND"
       ;;
     "10")
       # Making an HTTP GET request to view deposit history
@@ -236,23 +261,8 @@ while true; do
       fi
       ;;
     "11")
-      # Asking the user if they want to go back to the menu or exit
-      read -p "Do you want to go back to the menu or exit? (1 for back, 2 for exit): " CONTINUE
-
-      case "$CONTINUE" in
-        "1")
-          # Continue the loop to go back to the menu
-          continue
-          ;;
-        "2")
-          echo "Exiting the script."
-          exit 0
-          ;;
-        *)
-          echo "Invalid choice. Exiting the script."
-          exit 1
-          ;;
-      esac
+      echo "Exiting the script."
+      exit 0
       ;;
     *)
       echo "Invalid choice."
