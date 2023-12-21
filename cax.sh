@@ -19,10 +19,9 @@ while true; do
   echo "6. Check Open Order"
   echo "7. Cancel Order"
   echo "8. Withdraw"
-  echo "9. Deposit"
-  echo "10. Check Deposits & Withdraw History"
-  echo "11. Exit"
-  read -p "Enter your choice (1/2/3/4/5/6/7/8/9/10/11): " CHOICE
+  echo "9. Deposit History"
+  echo "10. Exit"
+  read -p "Enter your choice (1/2/3/4/5/6/7/8/9/10): " CHOICE
 
   case "$CHOICE" in
     "1")
@@ -35,7 +34,7 @@ while true; do
 
         # Saving the user's API key to the .env file
         echo "APIKEY=$PASTED_APIKEY" > .env
-        echo "API=$PASTED_APIKEY"  # Assuming you want to set API variable to the same value
+        echo "API=$PASTED_APIKEY" >> .env
         echo "PAIR1=$PAIR1" >> .env
         echo "PAIR2=$PAIR2" >> .env
         echo "Congratulations! You have successfully added your API KEY to .env."
@@ -54,7 +53,7 @@ while true; do
 
         # Saving the new API key value to the .env file
         echo "APIKEY=$NEW_API_KEY" > .env
-        echo "API=$NEW_API_KEY"  # Assuming you want to set API variable to the same value
+        echo "API=$NEW_API_KEY" >> .env
         echo "PAIR1=$PAIR1" >> .env
         echo "PAIR2=$PAIR2" >> .env
         echo "Congratulations! You have successfully obtained an API KEY and it's saved in .env."
@@ -140,12 +139,12 @@ while true; do
       case "$CANCEL_OPTION" in
         "1")
           # Get the ID of the first open order
-          SPECIFIC_ORDER_ID=$(http GET https://cax.piccadilly.autonity.org/api/orders API-Key:$API | jq -r 'first(.[] | select(.status == "open") | .order_id)')
+          SPECIFIC_ORDER_ID=$(http GET https://cax.piccadilly.autonity.org/api/orders API-Key:$APIKEY | jq -r 'first(.[] | select(.status == "open") | .order_id)')
 
           # Check if there is an open order
           if [ -n "$SPECIFIC_ORDER_ID" ]; then
             # Making an HTTP DELETE request to cancel the specific order
-            http DELETE "https://cax.piccadilly.autonity.org/api/orders/$SPECIFIC_ORDER_ID" API-Key:$API
+            http DELETE "https://cax.piccadilly.autonity.org/api/orders/$SPECIFIC_ORDER_ID" API-Key:$APIKEY
 
             if [ $? -eq 0 ]; then
               echo "Order $SPECIFIC_ORDER_ID has been canceled successfully."
@@ -158,12 +157,12 @@ while true; do
           ;;
         "2")
           # Getting all open order IDs
-          order_ids=$(http GET https://cax.piccadilly.autonity.org/api/orders API-Key:$API | jq -r '.[] | select(.status == "open") | .order_id')
+          order_ids=$(http GET https://cax.piccadilly.autonity.org/api/orders API-Key:$APIKEY | jq -r '.[] | select(.status == "open") | .order_id')
 
           if [ -n "$order_ids" ]; then
             # Canceling each open order
             for order_id in $order_ids; do
-              http DELETE "https://cax.piccadilly.autonity.org/api/orders/$order_id" API-Key:$API
+              http DELETE "https://cax.piccadilly.autonity.org/api/orders/$order_id" API-Key:$APIKEY
               echo "Order $order_id has been canceled successfully."
             done
 
@@ -204,44 +203,8 @@ while true; do
       http POST "https://cax.piccadilly.autonity.org/api/withdraws/" "API-Key:$APIKEY" "symbol=$SYMBOL" "amount=$AMOUNT"
       ;;
     "9")
-      # Asking the user to choose a symbol (ATN or NTN) for the deposit
-      echo "Symbol options:"
-      echo "1. ATN"
-      echo "2. NTN"
-      read -p "Choose symbol (1 for ATN, 2 for NTN): " SYMBOL_CHOICE
-
-      case "$SYMBOL_CHOICE" in
-        "1")
-          SYMBOL="ATN"
-          ;;
-        "2")
-          SYMBOL="NTN"
-          ;;
-        *)
-          echo "Invalid choice. Exiting the script."
-          exit 1
-          ;;
-      esac
-
-      # Asking the user to enter the deposit amount
-      read -p "Enter deposit amount: " AMOUNT
-
-      # Getting the recipient address from the DEPOSIT environment variable
-      RECIPIENT_ADDRESS="$DEPOSIT"
-
-      # Constructing the aut command based on the chosen symbol
-      if [ "$SYMBOL" == "ATN" ]; then
-        AUT_COMMAND="aut tx make --to $RECIPIENT_ADDRESS --value $AMOUNT | aut tx sign - | aut tx send -"
-      else
-        AUT_COMMAND="aut tx make --to $RECIPIENT_ADDRESS --value $AMOUNT --ntn | aut tx sign - | aut tx send -"
-      fi
-
-      # Executing the constructed aut command
-      eval "$AUT_COMMAND"
-      ;;
-    "10")
       # Making an HTTP GET request to view deposit history
-      DEPOSIT_HISTORY=$(http GET "https://cax.piccadilly.autonity.org/api/deposits" "API-Key:$API")
+      DEPOSIT_HISTORY=$(http GET "https://cax.piccadilly.autonity.org/api/deposits" "API-Key:$APIKEY")
 
       if [ -n "$DEPOSIT_HISTORY" ]; then
         echo "Deposit History:"
@@ -249,20 +212,25 @@ while true; do
       else
         echo "No deposit history found."
       fi
-
-      # Making an HTTP GET request to view withdraw history
-      WITHDRAW_HISTORY=$(http GET "https://cax.piccadilly.autonity.org/api/withdraws" "API-Key:$API")
-
-      if [ -n "$WITHDRAW_HISTORY" ]; then
-        echo "Withdraw History:"
-        echo "$WITHDRAW_HISTORY"
-      else
-        echo "No withdraw history found."
-      fi
       ;;
-    "11")
-      echo "Exiting the script."
-      exit 0
+    "10")
+      # Asking the user if they want to go back to the menu or exit
+      read -p "Do you want to go back to the menu or exit? (1 for back, 2 for exit): " CONTINUE
+
+      case "$CONTINUE" in
+        "1")
+          # Continue the loop to go back to the menu
+          continue
+          ;;
+        "2")
+          echo "Exiting the script."
+          exit 0
+          ;;
+        *)
+          echo "Invalid choice. Exiting the script."
+          exit 1
+          ;;
+      esac
       ;;
     *)
       echo "Invalid choice."
