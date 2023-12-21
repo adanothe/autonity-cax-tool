@@ -19,9 +19,10 @@ while true; do
   echo "6. Check Open Order"
   echo "7. Cancel Order"
   echo "8. Withdraw"
-  echo "9. Check Deposits & Withdraw History"
-  echo "10. Exit"
-  read -p "Enter your choice (1/2/3/4/5/6/7/8/9/10): " CHOICE
+  echo "9. Deposit"
+  echo "10. Check Deposits & Withdraw History"
+  echo "11. Exit"
+  read -p "Enter your choice (1/2/3/4/5/6/7/8/9/10/11): " CHOICE
 
   case "$CHOICE" in
     "1")
@@ -212,6 +213,17 @@ while true; do
       else
         echo "No deposit history found."
       fi
+      ;;
+    "10")
+      # Making an HTTP GET request to view deposit history
+      DEPOSIT_HISTORY=$(http GET "https://cax.piccadilly.autonity.org/api/deposits" "API-Key:$API")
+
+      if [ -n "$DEPOSIT_HISTORY" ]; then
+        echo "Deposit History:"
+        echo "$DEPOSIT_HISTORY"
+      else
+        echo "No deposit history found."
+      fi
 
       # Making an HTTP GET request to view withdraw history
       WITHDRAW_HISTORY=$(http GET "https://cax.piccadilly.autonity.org/api/withdraws" "API-Key:$API")
@@ -223,7 +235,7 @@ while true; do
         echo "No withdraw history found."
       fi
       ;;
-    "10")
+    "11")
       # Asking the user if they want to go back to the menu or exit
       read -p "Do you want to go back to the menu or exit? (1 for back, 2 for exit): " CONTINUE
 
