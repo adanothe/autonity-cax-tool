@@ -19,7 +19,7 @@ while true; do
   echo "6. Check Open Order"
   echo "7. Cancel Order"
   echo "8. Withdraw"
-  echo "9. Deposit & Withdraw History"
+  echo "9. Deposit History"
   echo "10. Exit"
   read -p "Enter your choice (1/2/3/4/5/6/7/8/9/10): " CHOICE
 
@@ -52,7 +52,6 @@ while true; do
 
         # Saving the new API key value to the .env file
         echo "APIKEY=$NEW_API_KEY" > .env
-        echo "API=$NEW_API_KEY" >> .env
         echo "PAIR1=$PAIR1" >> .env
         echo "PAIR2=$PAIR2" >> .env
         echo "Congratulations! You have successfully obtained an API KEY and it's saved in .env."
@@ -130,7 +129,7 @@ while true; do
       else
         echo "No open orders found."
       fi
-      ;;  
+      ;;
     "7")
       # Asking the user whether to cancel a specific order or all orders
       read -p "Do you want to cancel a specific order or all orders? (1 for specific, 2 for all): " CANCEL_OPTION
