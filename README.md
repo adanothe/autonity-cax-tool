@@ -49,11 +49,11 @@ Ensure the following dependencies are installed:
 
 Run the script using the following command:
 
-#manual
+# for manual installtion 
 ```bash
 ./cax.sh
 ```
-auto
+# for auto installtion 
 ```
 ./caxweb3.sh
 ```
