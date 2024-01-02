@@ -48,6 +48,7 @@ Ensure the following dependencies are installed:
 ## Usage
 
 Run the script using the following command:
+
 #manual
 ```bash
 ./cax.sh
