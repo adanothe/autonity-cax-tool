@@ -133,7 +133,7 @@ while true; do
       else
         echo "No open orders found."
       fi
-      ;;  
+      ;;
     "7")
       # Asking the user whether to cancel a specific order or all orders
       read -p "Do you want to cancel a specific order or all orders? (1 for specific, 2 for all): " CANCEL_OPTION
