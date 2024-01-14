@@ -52,6 +52,7 @@ while true; do
 
         # Saving the new API key value to the .env file
         echo "APIKEY=$NEW_API_KEY" > .env
+        echo "API=$NEW_API_KEY" >> .env
         echo "PAIR1=$PAIR1" >> .env
         echo "PAIR2=$PAIR2" >> .env
         echo "Congratulations! You have successfully obtained an API KEY and it's saved in .env."
@@ -116,10 +117,6 @@ while true; do
       # Asking the user to enter the amount
       read -p "Enter amount: " AMOUNT
 
-      # Making an HTTP POST request to place orders with the chosen parameters
-      http POST "https://cax.piccadilly.autonity.org/api/orders/" "API-Key:$APIKEY" "pair=$PAIR" "side=$SIDE" "price=$PRICE" "amount=$AMOUNT"
-      ;;
-    "6")
       # Making an HTTP POST request to place orders with the chosen parameters
       http POST "https://cax.piccadilly.autonity.org/api/orders/" "API-Key:$APIKEY" "pair=$PAIR" "side=$SIDE" "price=$PRICE" "amount=$AMOUNT"
       ;;
