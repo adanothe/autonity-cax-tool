@@ -52,7 +52,6 @@ while true; do
 
         # Saving the new API key value to the .env file
         echo "APIKEY=$NEW_API_KEY" > .env
-        echo "API=$NEW_API_KEY" >> .env
         echo "PAIR1=$PAIR1" >> .env
         echo "PAIR2=$PAIR2" >> .env
         echo "Congratulations! You have successfully obtained an API KEY and it's saved in .env."
