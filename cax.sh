@@ -120,6 +120,10 @@ while true; do
       http POST "https://cax.piccadilly.autonity.org/api/orders/" "API-Key:$APIKEY" "pair=$PAIR" "side=$SIDE" "price=$PRICE" "amount=$AMOUNT"
       ;;
     "6")
+      # Making an HTTP POST request to place orders with the chosen parameters
+      http POST "https://cax.piccadilly.autonity.org/api/orders/" "API-Key:$APIKEY" "pair=$PAIR" "side=$SIDE" "price=$PRICE" "amount=$AMOUNT"
+      ;;
+    "6")
       # Making an HTTP GET request to view open orders with order ID 0 and status "open"
       API_RESPONSE=$(http GET "https://cax.piccadilly.autonity.org/api/orders" "API-Key:$API" | jq 'map(select(.status == "open"))')
 
