@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#credit https://github.com/web3cdnservices/autonity-validator-toolkit/blob/main/tools/get_aut_api_key
 
 ROOT_PATH=$( dirname -- "$( readlink -f -- "$0"; )"; );
 
