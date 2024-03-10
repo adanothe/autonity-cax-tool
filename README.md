@@ -41,8 +41,6 @@ Ensure the following dependencies are installed:
 3. Make the CAX script executable:
    ```bash
    chmod +x cax.sh
-   chmod +x caxweb3.sh
-   chmod +x get_aut_api_key
    ```
    
 ## Usage
@@ -52,10 +50,6 @@ Run the script using the following command:
 # for manual installtion 
 ```bash
 ./cax.sh
-```
-# for auto installtion 
-```
-./caxweb3.sh
 ```
 The script provides the following options:
 
